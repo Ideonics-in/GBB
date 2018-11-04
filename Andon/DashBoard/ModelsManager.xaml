@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="TestBenchApp.DashBoard.ModelsManager"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dg="http://schemas.microsoft.com/wpf/2008/toolkit"
+             xmlns:UIControls="clr-namespace:TestBenchApp.UIControls"
+            
+             >
+    <Grid Background="Green">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="AUTO"/>
+        </Grid.RowDefinitions>
+        <DockPanel  Margin="5" >
+            <TabControl DockPanel.Dock="Left" Background="Green" TabStripPlacement="Top" SelectionChanged="TabControl_SelectionChanged">
+                <TabItem Name="ActualModelTab" Header="Models">
+                    <UIControls:AddDelete x:Name="ActualModelAddDeleteControl" MinWidth="200" addClicked="ModelAddDeleteControl_addClicked"
+                                  HorizontalAlignment="Stretch"  Margin="5,0,5,0">
+
+                    </UIControls:AddDelete>
+                </TabItem>
+
+                <TabItem Name="DummyElecTab" Header="Dummy Elec" Visibility="Collapsed">
+                    <UIControls:AddDelete x:Name="DummyElecModelAddDeleteControl" MinWidth="200" addClicked="ModelAddDeleteControl_addClicked"
+                                  HorizontalAlignment="Stretch"  Margin="5,0,5,0" >
+
+                    </UIControls:AddDelete>
+                </TabItem>
+                <TabItem Name="DummyMechTab" Header="Dummy Mech" Visibility="Collapsed">
+                    <UIControls:AddDelete x:Name="DummyMechModelAddDeleteControl" MinWidth="200" addClicked="ModelAddDeleteControl_addClicked"
+                                  HorizontalAlignment="Stretch"  Margin="5,0,5,0" >
+
+                    </UIControls:AddDelete>
+                </TabItem>
+            </TabControl>
+            <Grid>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="AUTO"/>
+                </Grid.RowDefinitions>
+                <GroupBox Grid.Row="0" Name="gbModelDetails" Visibility="Hidden">
+                    <GroupBox.Header>
+                        <Label Content="Model Details" Foreground="White" FontSize="12" Width="Auto" 
+                           Background="Green" HorizontalAlignment="Left"/>
+                    </GroupBox.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="AUTO"/>
+                        </Grid.RowDefinitions>
+
+                        <UIControls:ModelDetails x:Name="ModelDetailsControl"  Visibility="Visible" >
+
+                        </UIControls:ModelDetails>
+
+
+
+                        <Grid Grid.Row="1" Background="Green">
+                            <StackPanel  Background="Green"  Orientation="Horizontal" HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" Margin="10" >
+                                <Button Name="btnSave" Content="Save" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   MinWidth="100" FontSize="20" Margin="0,25,0,0" Click="btnSave_Click_1" ></Button>
+
+                                <Button Name="btnTestPrint" Content="Test Print" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                   MinWidth="100" FontSize="20" Margin="25,25,0,0" Click="btnTestPrint_Click_1" ></Button>
+                                <Button Name="btnCancel" Content="Cancel" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   MinWidth="100" FontSize="20" Margin="25,25,0,0" Click="btnCancel_Click_1"></Button>
+
+                            </StackPanel>
+                        </Grid>
+
+                    </Grid>
+                </GroupBox>
+
+            </Grid>
+        </DockPanel>
+
+
+     
+
+    </Grid>
+</UserControl>

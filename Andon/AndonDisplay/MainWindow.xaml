@@ -1,0 +1,91 @@
+﻿<Window x:Class="AndonDisplay.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:AndonDisplay"
+        xmlns:wpftoolkit="http://schemas.microsoft.com/wpf/2008/toolkit"
+        xmlns:clock="clr-namespace:AndonDisplay.Clock"
+        mc:Ignorable="d"
+        Title="MainWindow" WindowState="Minimized">
+    <Window.Resources>
+        <clock:ClockDisplay x:Key="SystemClock" />
+    </Window.Resources>
+    <Grid Background="Green">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0"  Margin="10" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.25*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.25*"/>
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0" Source="./Images/AOSmithLogo.png"/>
+            <TextBlock Grid.Column="1" FontSize="40" Foreground="White" Text="Andon Display" 
+                                       HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Center" TextAlignment="Center" Margin="50,0,0,0"/>
+            <clock:ClockDisplay Grid.Column="2" x:Name="SystemClock" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        </Grid>
+        <TabControl  Name="BaseTabControl" Grid.Row="1" Background="Green">
+            <GroupBox Grid.Row="1"  Grid.Column="0" Margin="5">
+                <GroupBox.Header>
+                    <Label Foreground="White" Content="Summary" Background="Green" BorderBrush="Green" BorderThickness="0"
+                             HorizontalAlignment="Center" Width="Auto" HorizontalContentAlignment="Center" MinWidth="20"/>
+                </GroupBox.Header>
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="0.75*"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+
+                    </Grid.RowDefinitions>
+
+                    <wpftoolkit:DataGrid Grid.Row="0" Name="SummaryDataGrid" AutoGenerateColumns="False" 
+                                     CanUserAddRows="False" CanUserDeleteRows="False" 
+                                     CanUserReorderColumns="False" CanUserResizeColumns="False" 
+                                     CanUserSortColumns="False" HorizontalAlignment="Center" VerticalAlignment="Top"
+                                     HorizontalContentAlignment="Center" Foreground="Black"
+                                     IsReadOnly="True" ItemsSource="{Binding}"   VerticalScrollBarVisibility="Auto">
+                        <wpftoolkit:DataGrid.Columns>
+                            <wpftoolkit:DataGridTemplateColumn Width="200" Header="Line"  IsReadOnly="True"  CanUserReorder="False"  >
+                                <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock  Text="{Binding Name  }" FontSize="15"  />
+                                    </DataTemplate>
+                                </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                            </wpftoolkit:DataGridTemplateColumn>
+                            <wpftoolkit:DataGridTemplateColumn Width="150" Header="Plan"  IsReadOnly="True"  CanUserReorder="False"  >
+                                <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock  Text="{Binding Plan  }" FontSize="15"  />
+                                    </DataTemplate>
+                                </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                            </wpftoolkit:DataGridTemplateColumn>
+                            <wpftoolkit:DataGridTemplateColumn Header="Actual" MinWidth="150"  IsReadOnly="True"  CanUserReorder="False"  >
+                                <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock  Text="{Binding Actual  }" FontSize="15"  />
+                                    </DataTemplate>
+                                </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                            </wpftoolkit:DataGridTemplateColumn>
+                            <!--<wpftoolkit:DataGridTemplateColumn Header="FG" MinWidth="100"  IsReadOnly="True"  CanUserReorder="False"  >
+                                <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock  Text="{Binding FG  }" FontSize="15"  />
+                                    </DataTemplate>
+                                </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                            </wpftoolkit:DataGridTemplateColumn>-->
+     
+                        </wpftoolkit:DataGrid.Columns>
+                    </wpftoolkit:DataGrid>
+
+
+
+                    
+
+                </Grid>
+            </GroupBox  >
+        </TabControl>
+    </Grid>
+</Window>

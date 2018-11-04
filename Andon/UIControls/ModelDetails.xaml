@@ -1,0 +1,191 @@
+﻿<UserControl x:Class="TestBenchApp.UIControls.ModelDetails"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             Height="Auto" Width="Auto"
+    >
+    <UserControl.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Width" Value="300"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+
+        <Style TargetType="Label">
+            <!--<Setter Property="MinWidth" Value="220"/>-->
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="15"/>
+
+
+        </Style>
+
+
+
+    </UserControl.Resources>
+    <Grid Background="Green">
+
+        <Grid Name="BaseGrid" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+                <RowDefinition Height="auto"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+
+                <Label Content="Model" Foreground="White" FontWeight="Bold" Margin="5" 
+                           HorizontalContentAlignment="Left" Width="180"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"/>
+                <TextBox Name="ProductTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" 
+                   HorizontalAlignment="Left" VerticalAlignment="Center" 
+                             FontSize="15"  Text="{Binding Path=Product}"
+                      Margin="5" MinWidth="250" />
+                <Label Content="Name" Foreground="White" FontWeight="Bold" Margin="5"  HorizontalContentAlignment="Left"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="180"/>
+                <TextBox Name="ModelNameTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=Name}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" 
+                      Margin="5" MinWidth="250" />
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <Label Content="Product No" Foreground="White" FontWeight="Bold" Margin="5" HorizontalContentAlignment="Left"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="180"/>
+                <TextBox Name="ProductNoTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=ProductNumber}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center" 
+                             FontSize="15" 
+                      Margin="5" MinWidth="250"  />
+                <Label Content="Code" Foreground="White" FontWeight="Bold" Margin="25,5,0,4.6" HorizontalContentAlignment="Left"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="180"/>
+                <TextBox Name="CodeTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=Code}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="15" 
+                      Margin="5" MinWidth="250" />
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <Label Content="Volume (Liters)" Foreground="White" FontWeight="Bold" Margin="5" HorizontalContentAlignment="Left"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="180" Visibility="Collapsed"/>
+                <TextBox Name="VolumeTextBox" Visibility="Collapsed"
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=Volume}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" 
+                      Margin="5" MinWidth="250" />
+                <Label Content="Stdg Loss" Foreground="White" FontWeight="Bold" Margin="5,0,0,0"  
+                   HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" Width="180"/>
+                <TextBox Name="StdgLossTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=StdgLoss}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" 
+                      Margin="5" MinWidth="250" />
+            </StackPanel>
+
+
+
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <Label Content="Power (kw)" Foreground="White" FontWeight="Bold" Margin="5"  HorizontalContentAlignment="Left"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="180" Visibility="Collapsed"/>
+                <TextBox Name="PowerTextBox" Visibility="Collapsed"
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=Power}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="15" 
+                      Margin="5" MinWidth="250" />
+                <Label Content="MRP (Rs)" Foreground="White" FontWeight="Bold" Margin="5,0,0,0" HorizontalContentAlignment="Left"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="180"/>
+                <TextBox Name="MRPTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=MRP}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="15" 
+                      Margin="5" MinWidth="250" />
+
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="5" Orientation="Horizontal" Visibility="Collapsed">
+                <Label Content="Vmax" Foreground="White" FontWeight="Bold" Margin="5"  HorizontalContentAlignment="Right"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="50"/>
+                <TextBox Name="VmaxTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=Vmax}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="15" 
+                      Margin="5" Width="100" />
+                <Label Content="Vmin" Foreground="White" FontWeight="Bold" Margin="5"  HorizontalContentAlignment="Right"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="50"/>
+                <TextBox Name="VminTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=Vmin}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="15" 
+                      Margin="5" Width="100" />
+
+                <Label Content="Imax" Foreground="White" FontWeight="Bold" Margin="5"  HorizontalContentAlignment="Right"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="50"/>
+                <TextBox Name="ImaxTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=Imax}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="15" 
+                      Margin="5" Width="100" />
+                <Label Content="Imin" Foreground="White" FontWeight="Bold" Margin="5"  HorizontalContentAlignment="Right"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="50"/>
+                <TextBox Name="IminTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=Imin}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="15" 
+                      Margin="5" Width="100" />
+                <Label Content="Pmax" Foreground="White" FontWeight="Bold" Margin="5"  HorizontalContentAlignment="Right"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="50"/>
+                <TextBox Name="PmaxTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=Pmax}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="15" 
+                      Margin="5" Width="100" />
+                <Label Content="Pmin" Foreground="White" FontWeight="Bold" Margin="5"  HorizontalContentAlignment="Right"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Width="50"/>
+                <TextBox Name="PminTextBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" Text="{Binding Path=Pmin}"
+                   HorizontalAlignment="Left" VerticalAlignment="Center"  FontSize="15" 
+                      Margin="5" Width="100" />
+
+            </StackPanel>
+
+            <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="10">
+
+
+                <CheckBox Name="ByPassPerformanceTestCheckBox" 
+                       FontWeight="Bold" BorderBrush="White" BorderThickness="5" 
+                   HorizontalAlignment="Right" VerticalAlignment="Center"  IsChecked="{Binding Path=ByPassPerformanceTest,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                         FontSize="15" 
+                      Margin="10,0,0,0"  />
+
+
+
+                <Label Content="ByPass Performance Test" Foreground="White" FontWeight="Bold"  
+                       HorizontalContentAlignment="Right" Margin="0,0,0,0"
+                   HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15"/>
+
+            </StackPanel>
+
+
+            <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="10"/>
+            <StackPanel Grid.Row="7" Orientation="Horizontal" Margin="10"/>
+
+
+
+
+
+        </Grid>
+
+    </Grid>
+</UserControl>
+

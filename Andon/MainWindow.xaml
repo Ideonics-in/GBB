@@ -1,0 +1,320 @@
+﻿<Window x:Class="TestBenchApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:clock="clr-namespace:TestBenchApp.Clock"
+        xmlns:wpftoolkit="http://schemas.microsoft.com/wpf/2008/toolkit"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="Water Treatment Andon System" 
+        WindowState="Maximized" Name="BaseWindow" WindowStyle="SingleBorderWindow"  Closing="WindowClosing">
+    <Window.Resources>
+        <x:Array x:Key="Count" Type="sys:Int32" 
+            >
+            <sys:Int32>1</sys:Int32>
+            <sys:Int32>2</sys:Int32>
+            <sys:Int32>3</sys:Int32>
+            <sys:Int32>4</sys:Int32>
+            <sys:Int32>5</sys:Int32>
+            <sys:Int32>6</sys:Int32>
+            <sys:Int32>7</sys:Int32>
+            <sys:Int32>8</sys:Int32>
+            <sys:Int32>9</sys:Int32>
+            <sys:Int32>10</sys:Int32>
+        </x:Array>
+
+
+        <clock:ClockDisplay x:Key="SystemClock" />
+    </Window.Resources>
+    <Grid Background="Green">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0"  Margin="10" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.25*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.25*"/>
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0" Source="./Images/AOSmithLogo.png"/>
+            <TextBlock Grid.Column="1" FontSize="40" Foreground="White" Text="GBB ANDON" 
+                                       HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Center" TextAlignment="Center" Margin="50,0,0,0"/>
+            <clock:ClockDisplay Grid.Column="2" x:Name="SystemClock1" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+        </Grid>
+        <TabControl  Name="BaseTabControl" Grid.Row="1" SelectionChanged="TabControl_SelectionChanged">
+            <TabItem Header="Shift Data" Name="tabProductionData" FontSize="15" Background="Green" Visibility="Visible" >
+
+                <Grid  Background="Green">
+
+
+                    <Grid  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <GroupBox Grid.Row="1"  Grid.Column="0" Margin="5">
+                            <GroupBox.Header>
+                                <Label Foreground="White" Content="Plan" Background="Green" BorderBrush="Green" BorderThickness="0"
+                             HorizontalAlignment="Center" Width="Auto" HorizontalContentAlignment="Center" MinWidth="20"/>
+                            </GroupBox.Header>
+                            <Grid >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="0.75*"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+
+                                </Grid.RowDefinitions>
+
+                                <wpftoolkit:DataGrid Grid.Row="0" Name="MainFramePlanGrid" AutoGenerateColumns="False" 
+                                     CanUserAddRows="False" CanUserDeleteRows="False" 
+                                     CanUserReorderColumns="False" CanUserResizeColumns="False" 
+                                     CanUserSortColumns="False" HorizontalAlignment="Center" VerticalAlignment="Top"
+                                     HorizontalContentAlignment="Center" Foreground="Black"
+                                     IsReadOnly="True" ItemsSource="{Binding}"   VerticalScrollBarVisibility="Auto">
+                                    <wpftoolkit:DataGrid.Columns>
+                                        <wpftoolkit:DataGridTemplateColumn Width="200" Header="Model"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock  Text="{Binding ModelName  }" FontSize="15"  />
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+                                        <wpftoolkit:DataGridTemplateColumn Width="50" Header="Plan"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock  Text="{Binding Quantity  }" FontSize="15"  />
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+                                        <wpftoolkit:DataGridTemplateColumn Header="S1"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock  Text="{Binding FSerialNo  }" FontSize="15"  />
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+                                        <wpftoolkit:DataGridTemplateColumn Header="F2"  IsReadOnly="True"  CanUserReorder="False" Visibility="Collapsed"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock  Text="{Binding IntegratedSerialNo  }" FontSize="15"  />
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+                                        <wpftoolkit:DataGridTemplateColumn Header="S2"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock  Text="{Binding CombinationSerialNo  }" FontSize="15"  />
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+                                        <wpftoolkit:DataGridTemplateColumn Header="FG"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock  Text="{Binding Actual  }" FontSize="15"  />
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+                                        <wpftoolkit:DataGridTemplateColumn Header="Current"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox   IsChecked="{Binding FStatus , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                                                                FontSize="15"   />
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+
+                                        <wpftoolkit:DataGridTemplateColumn Header="F1 Qty"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <ComboBox IsEnabled="{Binding FStatus}"  FontSize="15" 
+                                                              ItemsSource="{StaticResource ResourceKey=Count }" 
+                                                              SelectedValue="{Binding F1Quantity, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                                                             >
+
+
+                                                    </ComboBox>
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+
+
+
+
+
+
+                                    </wpftoolkit:DataGrid.Columns>
+                                </wpftoolkit:DataGrid>
+
+
+
+                                <StackPanel Grid.Row="1" Orientation="Horizontal" Name="FrameTotalPanel" HorizontalAlignment="Center" >
+                                    <Label Content="TOTAL" Foreground="White"  Width="200"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="15" Margin="5"></Label>
+                                    <TextBox Name="FrametbTotalPlan" Height="Auto" MinWidth="50" Margin="5,15" HorizontalContentAlignment="Center"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" ></TextBox>
+                                    <TextBox Name="FrametbTotalFserial" Height="Auto" MinWidth="50" Margin="5,15" HorizontalContentAlignment="Center"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" ></TextBox>
+                                    <TextBox Name="FrametbTotalIserial" Height="Auto" MinWidth="50" Margin="5,15" HorizontalContentAlignment="Center"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" Visibility="Collapsed"></TextBox>
+                                    <TextBox Name="FrametbTotalCserial" Height="Auto" MinWidth="50" Margin="5,15" HorizontalContentAlignment="Center"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" ></TextBox>
+
+                                    <TextBox x:Name="FrametbTotalAct" Height="Auto" MinWidth="50" Margin="5,15" HorizontalContentAlignment="Center"
+                        	HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5" />
+                                </StackPanel>
+
+                            </Grid>
+                        </GroupBox  >
+
+                        <GroupBox Grid.Row="1"  Grid.Column="1" Margin="10" Visibility="Collapsed">
+                            <GroupBox.Header>
+                                <Label Foreground="White" Content="Main Body" Background="Green" BorderBrush="Green" BorderThickness="0"
+                             HorizontalAlignment="Center" Width="Auto" HorizontalContentAlignment="Center" MinWidth="20"/>
+                            </GroupBox.Header>
+                            <Grid >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="0.75*"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+
+                                </Grid.RowDefinitions>
+
+                                <wpftoolkit:DataGrid Grid.Row="0" Name="MainBodyPlanGrid" AutoGenerateColumns="False" 
+                                     CanUserAddRows="False" CanUserDeleteRows="False" 
+                                     CanUserReorderColumns="False" CanUserResizeColumns="False" 
+                                     CanUserSortColumns="False" HorizontalAlignment="Center" VerticalAlignment="Top"
+                                     HorizontalContentAlignment="Center" Foreground="Black"
+                                     IsReadOnly="True" ItemsSource="{Binding}"   VerticalScrollBarVisibility="Auto">
+                                    <wpftoolkit:DataGrid.Columns>
+                                        <wpftoolkit:DataGridTemplateColumn Width="200" Header="Model"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock  Text="{Binding ModelName  }" FontSize="15"  />
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+                                        <wpftoolkit:DataGridTemplateColumn Width="50" Header="Plan"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock  Text="{Binding Quantity  }" FontSize="15"  />
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+                                        <wpftoolkit:DataGridTemplateColumn Header="M1"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock  Text="{Binding BSerialNo  }" FontSize="15"  />
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+
+                                        <wpftoolkit:DataGridTemplateColumn Header="Current"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <CheckBox   IsChecked="{Binding BStatus , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  
+                                                                FontSize="15"   />
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+
+                                        <wpftoolkit:DataGridTemplateColumn Header="M1 Qty"  IsReadOnly="True"  CanUserReorder="False"  >
+                                            <wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <ComboBox IsEnabled="{Binding BStatus}"  FontSize="15" 
+                                                              ItemsSource="{StaticResource ResourceKey=Count }" 
+                                                              SelectedValue="{Binding M1Quantity, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" 
+                                                             >
+
+
+                                                    </ComboBox>
+                                                </DataTemplate>
+                                            </wpftoolkit:DataGridTemplateColumn.CellTemplate>
+                                        </wpftoolkit:DataGridTemplateColumn>
+
+
+
+
+
+
+                                    </wpftoolkit:DataGrid.Columns>
+                                </wpftoolkit:DataGrid>
+
+                                <StackPanel Grid.Row="5" Orientation="Horizontal" Name="BodyTotalPanel" Margin="0,30,0,0"  HorizontalAlignment="Left">
+                                    <Label Content="TOTAL" Foreground="White"  Width="220"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" FontSize="15" Margin="5"></Label>
+                                    <TextBox Name="BodyTotalPlan" Height="Auto" MinWidth="50" Margin="5,15" HorizontalContentAlignment="Center"
+                     HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5"  ></TextBox>
+                                    <TextBox x:Name="BodyTotalAct" Height="Auto" MinWidth="50" Margin="5,15" HorizontalContentAlignment="Center"
+                        	HorizontalAlignment="Center" VerticalAlignment="Center" Padding="5"  />
+                                </StackPanel>
+
+                            </Grid>
+                        </GroupBox  >
+
+
+
+                    </Grid>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Manage" Name="tabPlan" FontSize="15" Background="Green" Visibility="Visible" Loaded="tabPlan_Loaded">
+
+
+                <Grid  Background="Green">
+
+
+                    <Grid Name="BaseGrid"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+
+
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="LOG" Background="Green">
+                <DockPanel DockPanel.Dock="Bottom" Background="Green"  >
+
+                    <wpftoolkit:DataGrid Grid.Row="0" Name="LogGrid" AutoGenerateColumns="True" 
+                                     CanUserAddRows="False" CanUserDeleteRows="False" 
+                                     CanUserReorderColumns="False" CanUserResizeColumns="False" 
+                                     CanUserSortColumns="False" HorizontalAlignment="Center" VerticalAlignment="Top"
+                                     HorizontalContentAlignment="Center" Foreground="Black"  FontSize="18"
+                                     IsReadOnly="True" ItemsSource="{Binding}" MinColumnWidth="200"  VerticalScrollBarVisibility="Auto" Margin="10">
+
+                    </wpftoolkit:DataGrid>
+                    <!--<TextBox Name="tbMsg" FontSize="20" 
+                     VerticalScrollBarVisibility="Auto" 
+                     HorizontalScrollBarVisibility="Auto"
+                                      
+                     Background="Green"
+                     Foreground="White"
+                     Margin="2"
+                     BorderThickness="0"/>-->
+                </DockPanel>
+            </TabItem>
+
+
+            <TabItem Header="Live Data" FontSize="15" Background="Green" Name="tabLiveScreen"  >
+                <Grid Background="Green">
+                    <wpftoolkit:DataGrid Name="AssociationGrid" AutoGenerateColumns="True" 
+                                     CanUserAddRows="False" CanUserDeleteRows="False" 
+                                     CanUserReorderColumns="False" CanUserResizeColumns="False" 
+                                     CanUserSortColumns="False" HorizontalAlignment="Center" VerticalAlignment="Top"
+                                     HorizontalContentAlignment="Center" Foreground="Black"
+                                     IsReadOnly="True" ItemsSource="{Binding}" ColumnWidth="200" Background="Green"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Test Data" FontSize="15" Background="Green" Name="TestDataTab"  >
+                <Grid Background="Green">
+                    <wpftoolkit:DataGrid Name="TestLogGrid" AutoGenerateColumns="True" 
+                                     CanUserAddRows="False" CanUserDeleteRows="False" 
+                                     CanUserReorderColumns="False" CanUserResizeColumns="False" 
+                                     CanUserSortColumns="False" HorizontalAlignment="Center" VerticalAlignment="Top"
+                                     HorizontalContentAlignment="Center" Foreground="Black"
+                                     IsReadOnly="True" ItemsSource="{Binding}" ColumnWidth="125"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
