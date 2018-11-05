@@ -1217,11 +1217,18 @@ namespace TestBenchApp
                     LogMessage("S3", "Invalid Barcode", iCode);
                     return;
                 }
+                bool exists = false; string ccode = string.Empty;
+                dataAccess.CheckIntegrationStatus(iCode, out exists, out ccode);
+                if(ccode != String.Empty)
+                {
+                    LogMessage("S3", "CS Already Printed ", iCode);
+                }
+                
 
                 Plan plan = null;
 
                 //LogMessage("F3:Integrated Scanned\t\t" + iCode);
-                LogMessage("S3", "CS Scanned", iCode);
+                LogMessage("S3", "Unit Scanned", iCode);
 
                 if (model.ByPassPerformanceTest == false)
                 {
