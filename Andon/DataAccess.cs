@@ -1825,21 +1825,18 @@ namespace TestBenchApp
 
         #region TEST_DATA_ACCESS
 
-        internal bool UnitFoundInPerformanceTestTable(string iCode)
+        internal bool PerformanceTestCompleted(string iCode)
         {
-            bool result = false;
+           
 
-
-
-
-            using (SqlConnection connection = new SqlConnection(TestDBConnectionString))
+            using (SqlConnection connection = new SqlConnection(conStr))
             {
                 connection.Open();
 
 
 
-                String qry = "SELECT  * from  Test_Result where [Serial_No] = '{0}' ";
-                qry = String.Format(qry, iCode+"\x0D");
+                String qry = "SELECT  * from  TestRecord where [Barcode] = '{0}' ";
+                qry = String.Format(qry, iCode);
 
                 SqlCommand command = new SqlCommand(qry, connection);
                 SqlDataReader dr = command.ExecuteReader();
@@ -1864,14 +1861,14 @@ namespace TestBenchApp
 
 
 
-            using (SqlConnection connection = new SqlConnection(TestDBConnectionString))
+            using (SqlConnection connection = new SqlConnection(conStr))
             {
                 connection.Open();
 
                 
 
-                String qry = "SELECT  * from  Test_Result where [Serial_No] = '{0}' and Result='Pass' ";
-                qry = String.Format(qry, iCode + "\x0D");
+                String qry = "SELECT  * from  TestRecord where [Barcode] = '{0}' and Status='PASS' ";
+                qry = String.Format(qry, iCode);
 
                 SqlCommand command = new SqlCommand(qry, connection);
                 SqlDataReader dr = command.ExecuteReader();
@@ -1879,7 +1876,7 @@ namespace TestBenchApp
                 dt.Load(dr);
                 dr.Close();
                 command.Dispose();
-
+                
                 if (dt.Rows.Count == 0)
                     return false;
                 else return true;
@@ -1977,7 +1974,52 @@ namespace TestBenchApp
             return 0;
         }
 
+        internal ObservableCollection<TestRecord> GetTodayTestRecords()
+        {
+            ObservableCollection<TestRecord> Log = new ObservableCollection<TestRecord>();
+            SqlConnection con = new SqlConnection(conStr);
+            con.Open();
 
+            String qry = String.Empty;
+            qry = @"Select * from TestRecord where  DATEDIFF(DD,timestamp,GETDATE()) < 1 order by [Timestamp] asc";
+
+            SqlCommand cmd = new SqlCommand(qry, con);
+            SqlDataReader dr = cmd.ExecuteReader();
+            DataTable dt = new DataTable();
+            dt.Load(dr);
+            dr.Close();
+            cmd.Dispose();
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                Log.Insert(0, new TestRecord
+                {
+                    Barcode = (String)dt.Rows[i]["Barcode"],
+                    Model = (String)dt.Rows[i]["Model"],
+                    
+                    ECT = (float)((double)dt.Rows[i]["ECT"]),
+                    
+                    IR = (float)((double)dt.Rows[i]["IR"]),
+                    LC = (float)((double)dt.Rows[i]["LC"]),
+                    HV = (float)((double)dt.Rows[i]["HV"]),
+                    Current = (float)((double)dt.Rows[i]["Current"]),
+                    Power = (float)((double)dt.Rows[i]["Power"]),
+                    Voltage = (float)((double)dt.Rows[i]["Voltage"]),
+                   
+                    Timestamp = (DateTime)dt.Rows[i]["Timestamp"],
+                    
+                    Status = (String)dt.Rows[i]["Status"]
+                  
+                    
+
+
+                });
+            }
+
+
+
+            return Log;
+        }
 
 
         #endregion
@@ -2061,9 +2103,9 @@ namespace TestBenchApp
 
 
             String qry = String.Empty;
-            qry = @"insert into [TestRecord] ( Barcode,Model, ECT,HV,IR,LC,Voltage,[Current],Power,Status)
-                    values('{0}', '{1}', {2},{3},{4},{5},{6},{7},{8},'{9}')";
-            qry = String.Format(qry, r.Barcode,r.Model,r.ECT,r.HV,r.IR,r.LC,r.Voltage,r.Current,r.Power,r.Status);
+            qry = @"insert into [TestRecord] ( Barcode,Model, ECT,HV,IR,LC,Voltage,[Current],Power,Status,Timestamp)
+                    values('{0}', '{1}', {2},{3},{4},{5},{6},{7},{8},'{9}','{10}')";
+            qry = String.Format(qry, r.Barcode,r.Model,r.ECT,r.HV,r.IR,r.LC,r.Voltage,r.Current,r.Power,r.Status,r.Timestamp.ToString());
             SqlCommand cmd = new SqlCommand(qry, con);
 
             cmd.ExecuteNonQuery();

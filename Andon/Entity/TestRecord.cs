@@ -15,12 +15,18 @@ namespace TestBenchApp
         public float Current { get; set; }
         public float Power { get; set; }
         public string Status { get; set; }
+        public DateTime Timestamp { get; set; }
 
         public void UpdateStatus(string barcode,string model,string status)
         {
             Barcode = barcode;
             Status = status;
             Model = model;
+        }
+
+        public override string ToString()
+        {
+            return "Current:" + Current.ToString() + " Voltage:" + Voltage.ToString() + " Power:" + Power.ToString()+ Environment.NewLine;
         }
     }
 

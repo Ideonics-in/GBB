@@ -44,7 +44,7 @@ namespace TestBenchApp
             return TestStatus;
         }
 
-        public TestRecord ParseResponse(String barcode,string model)
+        public TestRecord ParseResponse(String barcode,string model, float Imax, float Imin, float Pmax, float Pmin)
         {
             byte[] tempBuff = new byte[4];
             TestRecord tr = new TestRecord { Barcode = barcode,Model = model };
@@ -152,7 +152,10 @@ namespace TestBenchApp
 
             VAW_Meter_Error = ResponsePacket[59];
 
-            tr.Status = (TestStatus == 3) ? "PASS" : "FAIL";
+            if ((tr.Current >= Imin && (tr.Current <= Imax)) || (tr.Power >= Pmin && (tr.Power <= Pmax)))
+                tr.Status = "PASS";
+            else
+                tr.Status = "FAIL";
 
             return tr;
         }

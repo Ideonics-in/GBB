@@ -20,6 +20,7 @@ using System.Collections.Concurrent;
 using System.IO.Ports;
 using EasyModbus;
 
+
 namespace TestBenchApp
 {
     /// <summary>
@@ -195,6 +196,7 @@ namespace TestBenchApp
             LogGrid.DataContext = Log;
 
             TestRecordQ = new ConcurrentQueue<TestRecord>();
+            TestLog = dataAccess.GetTodayTestRecords();
             TestLogGrid.DataContext = TestLog;
 
             Models = dataAccess.GetModels();
@@ -422,10 +424,12 @@ namespace TestBenchApp
 
         private void TestWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            int[] result;
+            int[] result = { 0 };
             UnitAssociation u = (UnitAssociation)e.Argument;
             ModbusClient modbusClient = new ModbusClient("172.20.241.201", 502);
             modbusClient.Connect();
+
+            List<TestResponse> ResponseList = new List<TestResponse>();
 
             BackgroundWorker w = (BackgroundWorker)sender;
             TestJigPort = new SerialPort(TestJigComPort);
@@ -434,7 +438,7 @@ namespace TestBenchApp
 
             int res = 0;
 
-            TestResponse ts = new TestResponse();
+            
             TestJigPort.ReadTimeout = 5000;
             do
             {
@@ -447,62 +451,84 @@ namespace TestBenchApp
                     return;
                 }
 
-
-
-
                 TestJigPort.Write(ReadPacket, 0, 8);
 
+                TestResponse ts = new TestResponse();
                 try
                 {
                     TestJigPort.Read(ts.ResponsePacket, 0, 65);
+                   
                 }
                 catch(System.TimeoutException ex)
-                { continue; }
+                {
+                    continue;
+                }
+
                 
-                
+                ResponseList.Add(ts);
 
                 res = ts.GetStatus();
 
-               // result = modbusClient.ReadHoldingRegisters(5, 1);
+                result = modbusClient.ReadHoldingRegisters(5, 1);
+                System.Threading.Thread.Sleep(1000);
+           // } while (res < 2);
+           } while (result[0] != 1);
 
-            } while (res < 2);
-            //} while (result[0] != 1);
+            LogMessage("S2", "Peformance Test Completed", u.FCode);
 
             TestJigPort.Close();
             modbusClient.Disconnect();
             PerformanceTestTimer.Stop();
 
-            int TestResult = ts.GetStatus();
+            float Imax =0, Imin=0, Pmax=0, Pmin=0;
 
-            if (TestResult == 3)
+            foreach(Model m in Models)
             {
-                LogMessage("F2", "Peformance Test Passed", u.FCode);
-                dataAccess.InsertUnitAssociation(u.Model, u.FCode, Model.Type.FRAME);
-                if (!ControllerSimulation)
-                    IndicateMainFrameFunctionalTestSuccess();
+                if(m.Name == u.Model)
+                {
+                    Imax = (float)m.Imax;
+                    Imin = (float)m.Imin;
+                    Pmax = (float)m.Pmax;
+                    Pmin = (float)m.Pmin;
+                }
             }
 
-            else if(TestResult == 4)
+            foreach(TestResponse r in ResponseList)
             {
+                TestRecord rs = r.ParseResponse(u.FCode, u.Model, Imax,Imin,Pmax,Pmin);
 
-                LogMessage("F2", "Perfomance Test Failed", u.FCode);
-                if (!ControllerSimulation)
-                    IndicateMainFrameFunctionalTestFailure();
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                                       new Action(() =>
+                                       {
+                                           TestJigTextBox.Text += rs.ToString();
+                                           
+                                       }));
+
+
+                if (rs.Status == "PASS")
+                {
+                    LogMessage("S2", "Peformance Test Passed", u.FCode);
+                    rs.Timestamp = DateTime.Now;
+                    TestRecordQ.Enqueue(rs);
+                    dataAccess.InsertTestRecord(rs);
+
+
+                    if (!ControllerSimulation)
+                        IndicateMainFrameFunctionalTestSuccess();
+                    e.Result = u;
+                    return;
+                }
+
             }
-            else if (TestResult == 5)
-            { 
-                LogMessage("F2", "Perfomance Test Aborted", u.FCode);
-                if (!ControllerSimulation)
-                    IndicateMainFrameFunctionalTestFailure();
-            }
-
-            TestRecord tr = ts.ParseResponse(u.FCode, u.Model);
-            TestRecordQ.Enqueue(tr);
-            dataAccess.InsertTestRecord(tr);
-
+            TestRecord f = ResponseList[ResponseList.Count - 1].ParseResponse(u.FCode,u.Model,Imax,Imin,Pmax,Pmin);
+            f.Timestamp = DateTime.Now;
+            TestRecordQ.Enqueue(f);
+            dataAccess.InsertTestRecord(f);
+            LogMessage("S2", "Perfomance Test Failed", u.FCode);
+            if (!ControllerSimulation)
+                IndicateMainFrameFunctionalTestFailure();
             e.Result = u;
            
-            
 
         }
 
@@ -546,7 +572,7 @@ namespace TestBenchApp
             byte[] values = { 0, 0 };
             modbusMaster.WriteMultipleRegister((ushort)3, (byte)0, (ushort)8, values);
 
-            LogMessage("F2", "Failure Indication Stopped", "");
+            LogMessage("S2", "Failure Indication Stopped", "");
         }
 
         void FGProcess_Elapsed(object sender, ElapsedEventArgs e)
@@ -594,14 +620,18 @@ namespace TestBenchApp
             modbusMaster.WriteMultipleRegister((ushort)3, (byte)0, (ushort)2, values);
         }
 
+        ModbusClient PLCModbus = new ModbusClient("172.20.241.201", 502);
+
         void modbusTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             //byte[] values = new byte[8];
             modbusTimer.Stop();
-
-            ModbusClient modbusClient = new ModbusClient("172.20.241.201", 502);    //Ip-Address and Port of Modbus-TCP-Server
-            modbusClient.Connect();
-            var values = modbusClient.ReadHoldingRegisters(4, 1);
+            if (!PLCModbus.Connected)
+            {
+                PLCModbus = new ModbusClient("172.20.241.201", 502);    //Ip-Address and Port of Modbus-TCP-Server
+                PLCModbus.Connect();
+            }
+            var values = PLCModbus.ReadHoldingRegisters(4, 1);
             if(values[0] == 1)
             {
                 if (CurrentFramePlan == null)
@@ -617,7 +647,7 @@ namespace TestBenchApp
                 FSerialQ.Enqueue(true);
 
             }
-            modbusClient.Disconnect();
+           // modbusClient.Disconnect();
             //modbusMaster.ReadHoldingRegister(1, 0, 0, 1,ref values);
             modbusTimer.Start();
         }
@@ -1200,10 +1230,15 @@ namespace TestBenchApp
                 
 
                 MainFrameFunctionalTestFailure.Start();
-                LogMessage("F2", "Failure Indication Started", "");
+                LogMessage("S2", "Failure Indication Started", "");
             }
         }
 
+        private Model FindModel(string barcode)
+        {
+            if (!ModelDictionary.ContainsKey(barcode)) return null;
+            return ModelDictionary[barcode];
+        }
 
         private void andonManager_combStickerAlertEvent(object sender, CSScannerEventArgs e)
         {
@@ -1222,6 +1257,7 @@ namespace TestBenchApp
                 if(ccode != String.Empty)
                 {
                     LogMessage("S3", "CS Already Printed ", iCode);
+                    return;
                 }
                 
 
@@ -1232,6 +1268,12 @@ namespace TestBenchApp
 
                 if (model.ByPassPerformanceTest == false)
                 {
+                    if (dataAccess.PerformanceTestCompleted(iCode) == false)
+                    {
+                        LogMessage("S3", "Test Result Not found", iCode);
+                        latestCombinationCode = String.Empty;
+                        return;
+                    }
                     if (dataAccess.HasPassedPerformanceTest(iCode))
                     {
 
@@ -1320,9 +1362,15 @@ namespace TestBenchApp
 
 
                     else LogMessage("S3", "CS Printed", csCode);
-                    TestRecord tr = new TestRecord();
-                    tr.UpdateStatus(csCode, model.Name, "Bypassed");
-                    TestRecordQ.Enqueue(tr);
+
+                    if(!dataAccess.PerformanceTestCompleted(iCode))
+                    {
+                        TestRecord tr = new TestRecord();
+                        tr.UpdateStatus(csCode, model.Name, "Bypassed");
+                        TestRecordQ.Enqueue(tr);
+                    }
+
+                    
 
                     foreach (Plan p in FramePlanList)
                     {
@@ -1395,162 +1443,73 @@ namespace TestBenchApp
 
 
 
-                //if (model.Name.Contains("Dummy"))
-                //    template = DummyIntegratedBarcodeFile;
-                //else
-                //    template = IntegratedBarcodeFile;
+             
 
 
 
 
-                assocationBarcode = dataAccess.UnitAssociated(IsBody ? Model.Type.BODY : Model.Type.FRAME,
-                       modelCode, AssociationTimeout);
 
+                   
 
-                if (assocationBarcode != String.Empty) // if association exists
+                LogMessage("S2", "Unit Scanned", barcode);
+
+                if (!ControllerSimulation)
                 {
-                    foreach (Plan p in FramePlans)
-                    {
-                        if (p.ModelCode == modelCode)
-                        {
-                            plan = p;
-                            break;
-                        }
-                    }
-                    plan.IntegratedSerialNo++;
-                    String iCode =
-                        modelCode + DateTime.Now.ToString("yyMMdd") + plan.IntegratedSerialNo.ToString("D4");
+                    ModbusClient modbusClient = new ModbusClient("172.20.241.201", 502);
+                    modbusClient.Connect();
+                    modbusClient.WriteSingleRegister(0, 1);
+                    modbusClient.WriteSingleRegister(0, 0);
+                    modbusClient.Disconnect();
 
-                    LogMessage("F2", IsBody ? ("MB Scanned") : "MF Scanned", barcode);
-
-                    if (!IsBody)                 //if Main Frame then do functional testing check
-                    {
-                        if (model.ByPassFunctionalTest == true)
-                        {
-                            LogMessage("F2", "Functional Test ByPassed", barcode);
-                            if (!ControllerSimulation)
-                                IndicateMainFrameFunctionalTestSuccess();
-                        }
-                        else
-                        {
-
-
-                            if (dataAccess.HasPassedFunctionalTest(barcode))
-                            {
-                                LogMessage("F2", "Functional Test Passed", barcode);
-
-                                if (!ControllerSimulation)
-                                    IndicateMainFrameFunctionalTestSuccess();
-                            }
-
-                            else
-                            {
-
-                                LogMessage("F2", "Functional Test Failed", barcode);
-                                if (!ControllerSimulation)
-                                    IndicateMainFrameFunctionalTestFailure();
-                                return;
-                            }
-
-                        }
-
-                    }
-                    dataAccess.UpdateAssociation(barcode, (IsBody ? Model.Type.BODY : Model.Type.FRAME), assocationBarcode, iCode);
+                    LogMessage("S2", "Peformance Test Started", barcode);
 
 
 
 
+                        int TestResult = 0;
 
+                        UnitAssociation unit = new UnitAssociation(65535);
+                        unit.Model = model.Name;
+                        unit.FCode = barcode;
+                        PerformanceTestTimer.Start();
+                        TestWorker.RunWorkerAsync(unit);
+                    
 
+                    //LogMessage("S2", "Peformance Test ByPassed", barcode);
+                    //    dataAccess.InsertUnitAssociation(e.ModelNumber, barcode, Model.Type.FRAME);
 
+                    //    foreach (Plan p in FramePlans)
+                    //    {
+                    //        if (p.ModelCode == model.Code)
+                    //        {
+                    //            plan = p;
+                    //            break;
+                    //        }
+                    //    }
+                    //    plan.CombinationSerialNo++;
+                    //    String csCode = e.ModelNumber + DateTime.Now.ToString("yyMMdd") + plan.CombinationSerialNo.ToString("D4");
 
-                    if (PrinterSimulation)
-                    {
-                        ICodeQ.Enqueue(iCode);
-                    }
-                    dataAccess.UpdateISerial(plan);
+                    //    dataAccess.UpdateAssociation(csCode, Model.Type.COMBINED, "", barcode);
+                    /*
+                                                TestRecord tr = new TestRecord();
+                                                tr.UpdateStatus(csCode,model.Name, "Bypassed");
+                                                TestRecordQ.Enqueue(tr);
+                    */
                 }
-                else    // if there is no association then insert unit association
+                else
                 {
 
 
-                    if (IsBody)
-                    {
-                        dataAccess.InsertUnitAssociation(e.ModelNumber.Substring(0, e.ModelNumber.Length - 1), barcode, Model.Type.BODY);
-                        LogMessage("F2", "MB Scanned", barcode);
 
 
-                    }
-                    else
-                    {
-                        LogMessage("S2", "S1 Scanned", barcode);
-
-                        if (model.ByPassPerformanceTest == true)
-                        {
-                            LogMessage("S2", "Peformance Test ByPassed", barcode);
-                            dataAccess.InsertUnitAssociation(e.ModelNumber, barcode, Model.Type.FRAME);
-
-                            foreach (Plan p in FramePlans)
-                            {
-                                if (p.ModelCode == model.Code)
-                                {
-                                    plan = p;
-                                    break;
-                                }
-                            }
-                            plan.CombinationSerialNo++;
-                            String csCode = e.ModelNumber + DateTime.Now.ToString("yyMMdd") + plan.CombinationSerialNo.ToString("D4");
-
-                            dataAccess.UpdateAssociation(csCode, Model.Type.COMBINED, "", barcode);
-/*
-                            TestRecord tr = new TestRecord();
-                            tr.UpdateStatus(csCode,model.Name, "Bypassed");
-                            TestRecordQ.Enqueue(tr);
-*/
-                        }
-                        else
-                        {
-                            if (!ControllerSimulation)
-                            {
-                                ModbusClient modbusClient = new ModbusClient("172.20.241.201", 502);
-                                modbusClient.Connect();
-                                modbusClient.WriteSingleRegister(0, 1);
-                                modbusClient.WriteSingleRegister(0, 0);
-                                modbusClient.Disconnect();
-
-                                LogMessage("S2", "Peformance Test Started", barcode);
-
-                                int TestResult = 0;
-
-                                UnitAssociation unit = new UnitAssociation(65535);
-                                unit.Model = model.Name;
-                                unit.FCode = barcode;
-                                PerformanceTestTimer.Start();
-                                TestWorker.RunWorkerAsync(unit);
-
-                                //if(TestOverEvent.WaitOne(TEST_TIMEOUT) == false)
-                                //{
-                                //    TestWorker.CancelAsync();
-                                //    LogMessage("F2", "Peformance Test Timeout", barcode);
-                                //    return;
-                                //}
-                            }
-
-
-                        }
-
-
-                    }
+                   
                 }
+
             }
             
         }
 
-        private Model FindModel(string barcode)
-        {
-            if (!ModelDictionary.ContainsKey(barcode)) return null;
-            return ModelDictionary[barcode];
-        }
+       
   
 
         void andonManager_andonAlertEvent(object sender, AndonAlertEventArgs e)

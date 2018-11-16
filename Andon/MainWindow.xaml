@@ -305,7 +305,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Test Data" FontSize="15" Background="Green" Name="TestDataTab"  >
+            <TabItem Header="Test Data" FontSize="12" Background="Green" Name="TestDataTab"  >
                 <Grid Background="Green">
                     <wpftoolkit:DataGrid Name="TestLogGrid" AutoGenerateColumns="True" 
                                      CanUserAddRows="False" CanUserDeleteRows="False" 
@@ -313,6 +313,12 @@
                                      CanUserSortColumns="False" HorizontalAlignment="Center" VerticalAlignment="Top"
                                      HorizontalContentAlignment="Center" Foreground="Black"
                                      IsReadOnly="True" ItemsSource="{Binding}" ColumnWidth="125"/>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Test Jig Data" FontSize="15" Background="Green" Name="TestJigTab"  >
+                <Grid Background="Green">
+                    <TextBox Background="Green" Name="TestJigTextBox" FontSize="15" Foreground="White" />
                 </Grid>
             </TabItem>
         </TabControl>
